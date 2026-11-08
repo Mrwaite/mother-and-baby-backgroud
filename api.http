@@ -1,0 +1,48 @@
+# 接口调试（VS Code / Qoder 的 REST Client 插件）。本地先执行：
+#   npm run cli -- user:add --openid dev-openid --name 开发
+@base = http://localhost:3000/api/v1
+@openid = dev-openid
+
+### 当前用户 + 宝宝档案
+GET {{base}}/me
+X-WX-OPENID: {{openid}}
+
+### 创建 / 更新宝宝档案
+PUT {{base}}/baby
+X-WX-OPENID: {{openid}}
+Content-Type: application/json
+
+{ "nickname": "小米", "gender": "female", "birthDate": "2026-08-01", "birthWeightKg": 3.2 }
+
+### 首页看板
+GET {{base}}/dashboard
+X-WX-OPENID: {{openid}}
+
+### 新增瓶喂（clientId 每次换一个）
+POST {{base}}/care-records
+X-WX-OPENID: {{openid}}
+Content-Type: application/json
+
+{ "clientId": "{{$guid}}", "type": "bottle", "startAt": {{$timestamp}}000, "payload": { "milkType": "formula", "amountMl": 90 } }
+
+### 开始睡眠计时
+POST {{base}}/care-records
+X-WX-OPENID: {{openid}}
+Content-Type: application/json
+
+{ "clientId": "{{$guid}}", "type": "sleep", "startAt": {{$timestamp}}000, "payload": {} }
+
+### 今日汇总
+GET {{base}}/care-records/summary?date=2026-11-08
+X-WX-OPENID: {{openid}}
+
+### 耗材列表
+GET {{base}}/inventory/items
+X-WX-OPENID: {{openid}}
+
+### 新增耗材
+POST {{base}}/inventory/items
+X-WX-OPENID: {{openid}}
+Content-Type: application/json
+
+{ "name": "纸尿裤", "category": "diaper", "spec": "S", "unit": "片", "lowThreshold": 20, "quantity": 84 }

@@ -1,0 +1,20 @@
+# 本地开发用的 MySQL 8.0：docker compose -f docker-compose.dev.yml up -d
+# 同时建 mother_baby（开发）和 mother_baby_test（测试）两个库，字符集 utf8mb4
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mother-baby-mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: dev
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./scripts/init-dev-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+volumes:
+  mysql-data:
